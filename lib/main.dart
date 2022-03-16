@@ -1,4 +1,6 @@
+import 'package:bookstore/screens/book_detail.dart';
 import 'package:bookstore/screens/home.dart';
+import 'package:bookstore/util/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,10 +22,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Book',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.getAppThemeData(),
       home: const HomeScreen(),
+      routes: {
+        BookDetail.routeName: (_) => const BookDetail()
+      },
     );
   }
 }

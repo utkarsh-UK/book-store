@@ -4,9 +4,9 @@ import 'package:bookstore/models/book.dart';
 import 'package:bookstore/util/constants.dart';
 import 'package:bookstore/util/exceptions.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:get/get.dart';
 
 /// Abstract class defining core methods to work with API
 abstract class BaseApiController {
@@ -18,7 +18,7 @@ abstract class BaseApiController {
 
   Future<List<Book>> getSavedBooks();
 
-  Future<void> saveBook(int isbn13);
+  Future<void> saveBook(String isbn13);
 
   Future<List<Book>> searchBookByQuery(String query);
 
@@ -33,6 +33,13 @@ class ApiController extends GetxController implements BaseApiController {
   ApiController(http.Client client, SharedPreferences preferences)
       : _connect = client,
         _preferences = preferences;
+
+  var newBooks = <Book>[].obs;
+  List<Book> savedBooks = <Book>[].obs;
+  List<Book> recommendedBooks = <Book>[].obs;
+  List<Book> searchedBooks = <Book>[].obs;
+
+  final book = Rxn<Book>();
 
   /// Helper function to fetch data  from [url] and parse the JSON response
   /// to Map<>.
@@ -64,6 +71,8 @@ class ApiController extends GetxController implements BaseApiController {
     try {
       final response = await _requestData(url);
 
+      book.value = Book.fromJson(response);
+
       return Book.fromJson(response);
     } on BookException catch (b) {
       throw BookException(message: b.message);
@@ -73,7 +82,7 @@ class ApiController extends GetxController implements BaseApiController {
   @override
   Future<List<Book>> getNewBooks({int limit = 8}) async {
     final url = Uri.https(Constants.apiBaseUrl, "/1.0/new");
-    List<Book> newBooks = [];
+    List<Book> newFetchedBooks = [];
 
     try {
       final response = await _requestData(url);
@@ -81,13 +90,15 @@ class ApiController extends GetxController implements BaseApiController {
       final List<dynamic> listOfBooks = response['books'] ?? [];
 
       if (listOfBooks.isNotEmpty) {
-        newBooks = listOfBooks
+        newFetchedBooks = listOfBooks
             .map((book) => Book.fromJson(book))
             .toList()
             .sublist(0, limit);
       }
 
-      return newBooks;
+      newBooks.assignAll(newFetchedBooks);
+
+      return newFetchedBooks;
     } on BookException catch (b) {
       throw BookException(message: b.message);
     }
@@ -96,7 +107,7 @@ class ApiController extends GetxController implements BaseApiController {
   @override
   Future<List<Book>> getRecommendedBooks({int limit = 8}) async {
     final url = Uri.https(Constants.apiBaseUrl, "/1.0/new");
-    List<Book> recommendedBooks = [];
+    List<Book> recommendedFetchedBooks = [];
 
     try {
       final response = await _requestData(url);
@@ -104,13 +115,15 @@ class ApiController extends GetxController implements BaseApiController {
       final List<dynamic> listOfBooks = response['books'] ?? [];
 
       if (listOfBooks.isNotEmpty) {
-        recommendedBooks = listOfBooks
-            .map((book) => Book.fromJson(book))
-            .toList()
-            .sublist(0, limit);
+        recommendedFetchedBooks =
+            listOfBooks.map((book) => Book.fromJson(book)).toList()
+              ..shuffle()
+              ..sublist(0, limit);
       }
 
-      return recommendedBooks;
+      recommendedBooks.assignAll(recommendedFetchedBooks);
+
+      return recommendedFetchedBooks;
     } on BookException catch (b) {
       throw BookException(message: b.message);
     }
@@ -130,7 +143,11 @@ class ApiController extends GetxController implements BaseApiController {
       final List<Map<String, dynamic>> futureResults =
           await Future.wait<Map<String, dynamic>>(futures);
 
-      return futureResults.map((bookData) => Book.fromJson(bookData)).toList();
+      final mappedSavedBooks =
+          futureResults.map((bookData) => Book.fromJson(bookData)).toList();
+
+      savedBooks.assignAll(mappedSavedBooks);
+      return mappedSavedBooks;
     } catch (e) {
       throw BookException(message: e.toString());
     }
@@ -139,7 +156,7 @@ class ApiController extends GetxController implements BaseApiController {
   @override
   Future<List<Book>> searchBookByQuery(String query) async {
     final url = Uri.https(Constants.apiBaseUrl, "/1.0/search/$query");
-    List<Book> searchedBooks = [];
+    List<Book> searchedFetchedBooks = [];
 
     try {
       final response = await _requestData(url);
@@ -147,22 +164,26 @@ class ApiController extends GetxController implements BaseApiController {
       final List<dynamic> listOfBooks = response['books'] ?? [];
 
       if (listOfBooks.isNotEmpty) {
-        searchedBooks = listOfBooks.map((book) => Book.fromJson(book)).toList();
+        searchedFetchedBooks =
+            listOfBooks.map((book) => Book.fromJson(book)).toList();
       }
 
-      return searchedBooks;
+      searchedBooks.assignAll(searchedFetchedBooks);
+
+      return searchedFetchedBooks;
     } on BookException catch (b) {
       throw BookException(message: b.message);
     }
   }
 
   @override
-  Future<void> saveBook(int isbn13) async {
+  Future<void> saveBook(String isbn13) async {
     try {
       final savedList =
           _preferences.getStringList(Constants.savedBooksKey) ?? [];
 
-      savedList.add('$isbn13');
+      savedList.add(isbn13);
+      debugPrint("$isbn13 saved to local");
       await _preferences.setStringList(Constants.savedBooksKey, savedList);
     } catch (e) {
       throw BookException(message: e.toString());
