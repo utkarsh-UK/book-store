@@ -27,10 +27,16 @@ class NewLaunches extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("New Launches", style: textTheme.headline3),
-              const IconButton(
-                onPressed: null,
-                icon: Icon(Icons.arrow_right_alt,
-                    color: AppTheme.fontDarkColor),
+              IconButton(
+                onPressed: () => Navigator.of(context)
+                    .pushNamed('/common-books-list', arguments: {
+                  'screenTitle': "New Launches",
+                  'isRecommended': false,
+                }),
+                icon: const Icon(
+                  Icons.arrow_right_alt,
+                  color: AppTheme.fontDarkColor,
+                ),
               ),
             ],
           ),
@@ -39,16 +45,15 @@ class NewLaunches extends StatelessWidget {
             child: Obx(
               () => ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.newBooks.length,
+                itemCount: controller.newBooks.length ~/ 2,
                 itemBuilder: (ctx, index) => BookTile(
                   height: widgetHeight * 0.35,
                   width: size.width * 0.4,
                   title: controller.newBooks[index].title,
                   image: controller.newBooks[index].image,
-                  backgrounColorCode: 0xFFE6D6A3,
-                  onTap: () => Navigator.of(context).pushNamed
-                    ("/detail-book", arguments: controller
-                      .newBooks[index].isbn13),
+                  backgroundColorCode: 0xFFE6D6A3,
+                  onTap: () => Navigator.of(context).pushNamed("/detail-book",
+                      arguments: controller.newBooks[index].isbn13),
                 ),
               ),
             ),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:bookstore/models/book.dart';
 import 'package:bookstore/util/constants.dart';
 import 'package:bookstore/util/exceptions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,10 +88,8 @@ class ApiController extends GetxController implements BaseApiController {
       final List<dynamic> listOfBooks = response['books'] ?? [];
 
       if (listOfBooks.isNotEmpty) {
-        newFetchedBooks = listOfBooks
-            .map((book) => Book.fromJson(book))
-            .toList()
-            .sublist(0, limit);
+        newFetchedBooks =
+            listOfBooks.map((book) => Book.fromJson(book)).toList();
       }
 
       newBooks.assignAll(newFetchedBooks);
@@ -115,9 +112,7 @@ class ApiController extends GetxController implements BaseApiController {
 
       if (listOfBooks.isNotEmpty) {
         recommendedFetchedBooks =
-            listOfBooks.map((book) => Book.fromJson(book)).toList()
-              ..shuffle()
-              ..sublist(0, limit);
+            listOfBooks.map((book) => Book.fromJson(book)).toList()..shuffle();
       }
 
       recommendedBooks.assignAll(recommendedFetchedBooks);
@@ -181,7 +176,7 @@ class ApiController extends GetxController implements BaseApiController {
       final savedList =
           _preferences.getStringList(Constants.savedBooksKey) ?? [];
 
-      savedList.add(isbn13);
+      savedList.addIf(!savedList.contains(isbn13), isbn13);
       await _preferences.setStringList(Constants.savedBooksKey, savedList);
     } catch (e) {
       throw BookException(message: e.toString());
@@ -201,7 +196,7 @@ class ApiController extends GetxController implements BaseApiController {
     }
   }
 
-  bool isBookSaved(String isbn13)  {
+  bool isBookSaved(String isbn13) {
     try {
       final savedList =
           _preferences.getStringList(Constants.savedBooksKey) ?? [];

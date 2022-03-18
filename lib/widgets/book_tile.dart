@@ -5,7 +5,8 @@ class BookTile extends StatelessWidget {
   final double width;
   final String title;
   final String image;
-  final int backgrounColorCode;
+  final int backgroundColorCode;
+  final bool shouldShowBookTitle;
 
   final VoidCallback onTap;
 
@@ -15,7 +16,8 @@ class BookTile extends StatelessWidget {
     required this.title,
     required this.image,
     required this.onTap,
-    this.backgrounColorCode = 0xFF7A7787,
+    this.backgroundColorCode = 0xFF7A7787,
+    this.shouldShowBookTitle = true,
     Key? key,
   }) : super(key: key);
 
@@ -35,7 +37,7 @@ class BookTile extends StatelessWidget {
               margin: const EdgeInsets.only(right: 14.0, bottom: 6.0),
               padding: EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: Color(backgrounColorCode),
+                color: Color(backgroundColorCode),
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
                   fit: BoxFit.cover,
@@ -46,19 +48,21 @@ class BookTile extends StatelessWidget {
               ),
             ),
           ),
-          Flexible(
-            flex: 1,
-            child: SizedBox(
-              width: width,
-              child: Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.bodyText2,
-                textAlign: TextAlign.left,
-              ),
-            ),
-          )
+          shouldShowBookTitle
+              ? Flexible(
+                  flex: 1,
+                  child: SizedBox(
+                    width: width,
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodyText2,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink()
         ],
       ),
     );

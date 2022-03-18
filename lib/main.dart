@@ -1,5 +1,7 @@
 import 'package:bookstore/screens/book_detail.dart';
 import 'package:bookstore/screens/home.dart';
+import 'package:bookstore/screens/common_books_list.dart';
+import 'package:bookstore/screens/landing.dart';
 import 'package:bookstore/util/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -23,9 +25,10 @@ class MyApp extends StatelessWidget {
       title: 'Book',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.getAppThemeData(),
-      home: const HomeScreen(),
+      home: const LandingScreen(),
       routes: {
-        BookDetail.routeName: (_) => const BookDetail()
+        BookDetail.routeName: (_) => const BookDetail(),
+        CommonBooksList.routeName: (_) => const CommonBooksList(),
       },
     );
   }

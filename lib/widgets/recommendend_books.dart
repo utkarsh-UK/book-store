@@ -27,9 +27,13 @@ class RecommendedBooks extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Recommended", style: textTheme.headline3),
-              const IconButton(
-                onPressed: null,
-                icon: Icon(Icons.arrow_right_alt,
+               IconButton(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed('/common-books-list', arguments: {
+                      'screenTitle': "Recommended Books",
+                      'isRecommended': true,
+                    }),
+                icon: const Icon(Icons.arrow_right_alt,
                     color: AppTheme.fontDarkColor),
               ),
             ],
@@ -39,7 +43,7 @@ class RecommendedBooks extends StatelessWidget {
             child: Obx(
               () => ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.newBooks.length,
+                itemCount: controller.recommendedBooks.length ~/ 2,
                 itemBuilder: (ctx, index) => BookTile(
                   height: widgetHeight * 0.35,
                   width: size.width * 0.4,
