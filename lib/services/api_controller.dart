@@ -20,6 +20,8 @@ abstract class BaseApiController {
 
   Future<void> saveBook(String isbn13);
 
+  Future<void> removeSavedBook(String isbn13);
+
   Future<List<Book>> searchBookByQuery(String query);
 
   /// Fetch specific book details by [isbn13] number.
@@ -48,18 +50,15 @@ class ApiController extends GetxController implements BaseApiController {
       final response = await _connect.get(url);
 
       if (response.statusCode == 200) {
-        debugPrint('${json.decode(response.body) as Map<String, dynamic>}');
         return json.decode(response.body) as Map<String, dynamic>;
       } else {
         final String error =
             "Request failed with status code ${response.statusCode} "
             "and error ${response.reasonPhrase}";
 
-        debugPrint(error);
         throw BookException(message: error);
       }
     } catch (e) {
-      debugPrint(e.toString());
       throw BookException();
     }
   }
@@ -183,8 +182,31 @@ class ApiController extends GetxController implements BaseApiController {
           _preferences.getStringList(Constants.savedBooksKey) ?? [];
 
       savedList.add(isbn13);
-      debugPrint("$isbn13 saved to local");
       await _preferences.setStringList(Constants.savedBooksKey, savedList);
+    } catch (e) {
+      throw BookException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> removeSavedBook(String isbn13) async {
+    try {
+      final savedList =
+          _preferences.getStringList(Constants.savedBooksKey) ?? [];
+
+      savedList.remove(isbn13);
+      await _preferences.setStringList(Constants.savedBooksKey, savedList);
+    } catch (e) {
+      throw BookException(message: e.toString());
+    }
+  }
+
+  bool isBookSaved(String isbn13)  {
+    try {
+      final savedList =
+          _preferences.getStringList(Constants.savedBooksKey) ?? [];
+
+      return savedList.contains(isbn13);
     } catch (e) {
       throw BookException(message: e.toString());
     }
