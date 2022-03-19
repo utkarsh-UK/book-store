@@ -35,10 +35,15 @@ class ApiController extends GetxController implements BaseApiController {
       : _connect = client,
         _preferences = preferences;
 
-  var newBooks = <Book>[].obs;
+  List<Book> newBooks = <Book>[].obs;
   List<Book> savedBooks = <Book>[].obs;
   List<Book> recommendedBooks = <Book>[].obs;
-  List<Book> searchedBooks = <Book>[].obs;
+  RxList searchedBooks = <Book>[].obs;
+
+  int nextPageNumber = 1;
+  int totalRecords = 0;
+  RxBool isLoading = false.obs;
+  RxBool allDataFetched = false.obs;
 
   final book = Rxn<Book>();
 
@@ -149,20 +154,30 @@ class ApiController extends GetxController implements BaseApiController {
 
   @override
   Future<List<Book>> searchBookByQuery(String query) async {
-    final url = Uri.https(Constants.apiBaseUrl, "/1.0/search/$query");
+    isLoading.value = true;
+
+    final url =
+        Uri.https(Constants.apiBaseUrl, "/1.0/search/$query/$nextPageNumber");
     List<Book> searchedFetchedBooks = [];
 
     try {
       final response = await _requestData(url);
 
-      final List<dynamic> listOfBooks = response['books'] ?? [];
+      totalRecords = int.tryParse('${response['total']}') ?? 0;
+      if (totalRecords > searchedBooks.length) {
+        final List<dynamic> listOfBooks = response['books'] ?? [];
 
-      if (listOfBooks.isNotEmpty) {
-        searchedFetchedBooks =
-            listOfBooks.map((book) => Book.fromJson(book)).toList();
+        if (listOfBooks.isNotEmpty) {
+          nextPageNumber++;
+          searchedFetchedBooks =
+              listOfBooks.map((book) => Book.fromJson(book)).toList();
+        }
+      } else {
+        allDataFetched.update((val) => val = true);
       }
 
-      searchedBooks.assignAll(searchedFetchedBooks);
+      searchedBooks.addAll(searchedFetchedBooks);
+      isLoading.value = false;
 
       return searchedFetchedBooks;
     } on BookException catch (b) {
@@ -205,5 +220,13 @@ class ApiController extends GetxController implements BaseApiController {
     } catch (e) {
       throw BookException(message: e.toString());
     }
+  }
+
+  void resetSearchTask() {
+    searchedBooks.clear();
+    nextPageNumber = 1;
+    totalRecords = 0;
+    isLoading.value = false;
+    allDataFetched.value = false;
   }
 }

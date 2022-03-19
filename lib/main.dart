@@ -1,5 +1,4 @@
 import 'package:bookstore/screens/book_detail.dart';
-import 'package:bookstore/screens/home.dart';
 import 'package:bookstore/screens/common_books_list.dart';
 import 'package:bookstore/screens/landing.dart';
 import 'package:bookstore/util/theme.dart';

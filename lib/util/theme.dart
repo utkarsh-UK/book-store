@@ -26,60 +26,59 @@ class AppTheme {
         scrollbarTheme: const ScrollbarThemeData()
             .copyWith(thumbColor: MaterialStateProperty.all(primaryColor)),
         textTheme: const TextTheme(
-          headline1: TextStyle(
-            fontSize: 48.0,
-            fontWeight: FontWeight.w700,
-            color: fontDarkColor,
-          ),
-          headline2: TextStyle(
-            fontFamily: 'Josefin Sans',
-            fontSize: 36.0,
-            fontWeight: FontWeight.w700,
-            color: fontDarkColor,
-          ),
-          headline3: TextStyle(
-            fontFamily: 'Josefin Sans',
-            fontSize: 24.0,
-            fontWeight: FontWeight.w700,
-            color: fontDarkColor,
-          ),
-          headline4: TextStyle(
-            fontFamily: 'Josefin Sans',
-            fontSize: 18.0,
-            fontWeight: FontWeight.w600,
-            color: fontDarkColor,
-          ),
-          headline5: TextStyle(
-            fontFamily: 'Josefin Sans',
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
-            color: fontDarkColor,
-          ),
-          headline6: TextStyle(
-            fontFamily: 'Josefin Sans',
-            fontSize: 12.0,
-            fontWeight: FontWeight.w400,
-            color: fontDarkColor,
-          ),
-          bodyText1: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 24.0,
-            fontWeight: FontWeight.w500,
-            color: fontLightColor,
-          ),
-          bodyText2: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 14.0,
-            fontWeight: FontWeight.w400,
-            color: fontLightColor,
-          ),
-          button: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: fontDarkColor,
-          )
-        ),
+            headline1: TextStyle(
+              fontSize: 48.0,
+              fontWeight: FontWeight.w700,
+              color: fontDarkColor,
+            ),
+            headline2: TextStyle(
+              fontFamily: 'Josefin Sans',
+              fontSize: 36.0,
+              fontWeight: FontWeight.w700,
+              color: fontDarkColor,
+            ),
+            headline3: TextStyle(
+              fontFamily: 'Josefin Sans',
+              fontSize: 24.0,
+              fontWeight: FontWeight.w700,
+              color: fontDarkColor,
+            ),
+            headline4: TextStyle(
+              fontFamily: 'Josefin Sans',
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,
+              color: fontDarkColor,
+            ),
+            headline5: TextStyle(
+              fontFamily: 'Josefin Sans',
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+              color: fontDarkColor,
+            ),
+            headline6: TextStyle(
+              fontFamily: 'Josefin Sans',
+              fontSize: 12.0,
+              fontWeight: FontWeight.w400,
+              color: fontDarkColor,
+            ),
+            bodyText1: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 24.0,
+              fontWeight: FontWeight.w500,
+              color: fontLightColor,
+            ),
+            bodyText2: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 14.0,
+              fontWeight: FontWeight.w400,
+              color: fontLightColor,
+            ),
+            button: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+              color: fontDarkColor,
+            )),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             elevation: 0.0,
@@ -96,5 +95,8 @@ class AppTheme {
             ),
           ),
         ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: primaryColor),
+        textSelectionTheme:
+            const TextSelectionThemeData(cursorColor: AppTheme.primaryColor),
       );
 }

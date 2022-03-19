@@ -27,12 +27,12 @@ class RecommendedBooks extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Recommended", style: textTheme.headline3),
-               IconButton(
-                onPressed: () =>
-                    Navigator.of(context).pushNamed('/common-books-list', arguments: {
-                      'screenTitle': "Recommended Books",
-                      'isRecommended': true,
-                    }),
+              IconButton(
+                onPressed: () => Navigator.of(context)
+                    .pushNamed('/common-books-list', arguments: {
+                  'screenTitle': "Recommended Books",
+                  'isRecommended': true,
+                }),
                 icon: const Icon(Icons.arrow_right_alt,
                     color: AppTheme.fontDarkColor),
               ),
@@ -41,18 +41,24 @@ class RecommendedBooks extends StatelessWidget {
           const SizedBox(height: 16.0),
           Expanded(
             child: Obx(
-              () => ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.recommendedBooks.length ~/ 2,
-                itemBuilder: (ctx, index) => BookTile(
-                  height: widgetHeight * 0.35,
-                  width: size.width * 0.4,
-                  title: controller.recommendedBooks[index].title,
-                  image: controller.recommendedBooks[index].image,
-                  onTap: () => Navigator.of(context).pushNamed("/detail-book",
-                      arguments: controller.recommendedBooks[index].isbn13),
-                ),
-              ),
+              () => controller.recommendedBooks.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.recommendedBooks.length ~/ 2,
+                      itemBuilder: (ctx, index) => BookTile(
+                        height: widgetHeight * 0.35,
+                        width: size.width * 0.4,
+                        title: controller.recommendedBooks[index].title,
+                        image: controller.recommendedBooks[index].image,
+                        onTap: () => Navigator.of(context).pushNamed(
+                            "/detail-book",
+                            arguments:
+                                controller.recommendedBooks[index].isbn13),
+                      ),
+                    ),
             ),
           )
         ],

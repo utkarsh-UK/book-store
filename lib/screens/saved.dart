@@ -23,6 +23,7 @@ class SavedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ApiController controller = Get.put(locator.get<ApiController>());
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: const BookAppBar(title: 'Saved Books'),
@@ -32,30 +33,39 @@ class SavedScreen extends StatelessWidget {
           child: StatefulWrapper(
             onInit: controller.getSavedBooks,
             child: Obx(
-              () => GridView.custom(
-                physics: const BouncingScrollPhysics(),
-                gridDelegate: SliverWovenGridDelegate.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 4,
-                  pattern: pattern,
-                ),
-                childrenDelegate: SliverChildBuilderDelegate((context, index) {
-                  final tile = pattern[index % pattern.length];
+              () => controller.savedBooks.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No saved books yet.',
+                        style: textTheme.button,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : GridView.custom(
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate: SliverWovenGridDelegate.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 4,
+                        pattern: pattern,
+                      ),
+                      childrenDelegate:
+                          SliverChildBuilderDelegate((context, index) {
+                        final tile = pattern[index % pattern.length];
 
-                  return BookTile(
-                    height: 200,
-                    width: (200 * tile.aspectRatio).ceil().toDouble(),
-                    title: controller.savedBooks[index].title,
-                    image: controller.savedBooks[index].image,
-                    shouldShowBookTitle: false,
-                    onTap: () => Navigator.of(context).pushNamed(
-                      '/detail-book',
-                      arguments: controller.savedBooks[index].isbn13,
+                        return BookTile(
+                          height: 200,
+                          width: (200 * tile.aspectRatio).ceil().toDouble(),
+                          title: controller.savedBooks[index].title,
+                          image: controller.savedBooks[index].image,
+                          shouldShowBookTitle: false,
+                          onTap: () => Navigator.of(context).pushNamed(
+                            '/detail-book',
+                            arguments: controller.savedBooks[index].isbn13,
+                          ),
+                        );
+                      }, childCount: controller.savedBooks.length),
                     ),
-                  );
-                }, childCount: controller.savedBooks.length),
-              ),
             ),
           ),
         ),

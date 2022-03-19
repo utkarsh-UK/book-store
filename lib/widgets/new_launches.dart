@@ -43,19 +43,24 @@ class NewLaunches extends StatelessWidget {
           const SizedBox(height: 16.0),
           Expanded(
             child: Obx(
-              () => ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.newBooks.length ~/ 2,
-                itemBuilder: (ctx, index) => BookTile(
-                  height: widgetHeight * 0.35,
-                  width: size.width * 0.4,
-                  title: controller.newBooks[index].title,
-                  image: controller.newBooks[index].image,
-                  backgroundColorCode: 0xFFE6D6A3,
-                  onTap: () => Navigator.of(context).pushNamed("/detail-book",
-                      arguments: controller.newBooks[index].isbn13),
-                ),
-              ),
+              () => controller.newBooks.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.newBooks.length ~/ 2,
+                      itemBuilder: (ctx, index) => BookTile(
+                        height: widgetHeight * 0.35,
+                        width: size.width * 0.4,
+                        title: controller.newBooks[index].title,
+                        image: controller.newBooks[index].image,
+                        backgroundColorCode: 0xFFE6D6A3,
+                        onTap: () => Navigator.of(context).pushNamed(
+                            "/detail-book",
+                            arguments: controller.newBooks[index].isbn13),
+                      ),
+                    ),
             ),
           )
         ],
