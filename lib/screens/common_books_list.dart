@@ -11,8 +11,12 @@ import '../util/injector.dart';
 class CommonBooksList extends StatelessWidget {
   static const String routeName = '/common-books-list';
 
+  /// Helper widget for rendering books grid.
+  ///
+  /// Observes changes for [controller.newBooks] and [controller.recommendedBooks].
   const CommonBooksList({Key? key}) : super(key: key);
 
+  /// Grid style pattern with 2 columns.
   static const pattern = [
     WovenGridTile(1),
     WovenGridTile(
@@ -25,11 +29,14 @@ class CommonBooksList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ApiController controller = Get.put(locator.get<ApiController>());
+    // Accept [isRecommended] argument for conditionally rendering [newBooks] or [recommendedBooks] list.
     final Map<String, dynamic> arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     return Scaffold(
-      appBar: const BookAppBar(title: "Saved Books"),
+      appBar: BookAppBar(
+        title: (arguments['isRecommended'] ?? false) ? "Recommended Books" : "New Books",
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 14.0, right: 14.0),
@@ -55,8 +62,7 @@ class CommonBooksList extends StatelessWidget {
     );
   }
 
-  SliverChildBuilderDelegate _buildNewBooksSliverDelegate(
-      ApiController controller) {
+  SliverChildBuilderDelegate _buildNewBooksSliverDelegate(ApiController controller) {
     return SliverChildBuilderDelegate((context, index) {
       final tile = pattern[index % pattern.length];
 
@@ -74,8 +80,7 @@ class CommonBooksList extends StatelessWidget {
     }, childCount: controller.newBooks.length);
   }
 
-  SliverChildBuilderDelegate _buildRecommendedBooksSliverDelegate(
-      ApiController controller) {
+  SliverChildBuilderDelegate _buildRecommendedBooksSliverDelegate(ApiController controller) {
     return SliverChildBuilderDelegate((context, index) {
       final tile = pattern[index % pattern.length];
 

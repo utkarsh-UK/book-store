@@ -9,6 +9,9 @@ import '../util/injector.dart';
 import '../widgets/book_tile.dart';
 
 class SavedScreen extends StatelessWidget {
+  /// Renders saved books lists in a grid.
+  ///
+  /// Observes [controller.savedBooks] from Controller.
   const SavedScreen({Key? key}) : super(key: key);
 
   static const pattern = [

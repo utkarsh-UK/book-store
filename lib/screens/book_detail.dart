@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../services/api_controller.dart';
 
 class BookDetail extends StatelessWidget {
+  /// Shows details for a single book
   const BookDetail({Key? key}) : super(key: key);
 
   static const routeName = '/detail-book';
@@ -14,6 +15,7 @@ class BookDetail extends StatelessWidget {
     final ApiController controller = Get.put(locator.get<ApiController>());
     final TextTheme textTheme = Theme.of(context).textTheme;
 
+    // Accepts route argument, ISBN of the book
     final String bookID = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
@@ -42,13 +44,11 @@ class BookDetail extends StatelessWidget {
           builder: (ctx, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasError) {
+            } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasError) {
               return Center(
                 child: Text(snapshot.error.toString()),
               );
-            } else if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
+            } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
               return BookInformationContainer(
                 controller: controller,
                 bookID: bookID,
@@ -76,8 +76,7 @@ class BookInformationContainer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<BookInformationContainer> createState() =>
-      _BookInformationContainerState();
+  State<BookInformationContainer> createState() => _BookInformationContainerState();
 }
 
 class _BookInformationContainerState extends State<BookInformationContainer> {
@@ -98,6 +97,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Obx(
+      //first half
       () => Container(
         height: size.height,
         width: size.width,
@@ -138,23 +138,19 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
                     ),
                     onPressed: () async {
                       if (!isBookSaved) {
-                        await _controller
-                            .saveBook(_controller.book.value!.isbn13);
+                        await _controller.saveBook(_controller.book.value!.isbn13);
                         setState(() => isBookSaved = true);
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                                Text('Book has been added to saved.'),
+                            content: Text('Book has been added to saved.'),
                           ),
                         );
                       } else {
-                        await _controller
-                            .removeSavedBook(_controller.book.value!.isbn13);
+                        await _controller.removeSavedBook(_controller.book.value!.isbn13);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                            Text('Book removed from saved'),
+                            content: Text('Book removed from saved'),
                           ),
                         );
                         setState(() => isBookSaved = false);
@@ -167,8 +163,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
             Container(
               height: size.height * 0.25,
               width: size.width * 0.5,
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+              margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
@@ -196,6 +191,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
                 softWrap: false,
               ),
             ),
+            // second half
             Expanded(
               flex: 5,
               child: Container(
@@ -231,9 +227,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
                             Text.rich(
                               TextSpan(
                                 children: [
-                                  TextSpan(
-                                      text: _controller.book.value!.year,
-                                      style: textTheme.button),
+                                  TextSpan(text: _controller.book.value!.year, style: textTheme.button),
                                   const TextSpan(text: "\nYear"),
                                 ],
                               ),
@@ -243,8 +237,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                      text: _controller.book.value!.language,
-                                      style: textTheme.button),
+                                      text: _controller.book.value!.language, style: textTheme.button),
                                   const TextSpan(text: "\nLanguage"),
                                 ],
                               ),
@@ -253,9 +246,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
                             Text.rich(
                               TextSpan(
                                 children: [
-                                  TextSpan(
-                                      text: _controller.book.value!.pages,
-                                      style: textTheme.button),
+                                  TextSpan(text: _controller.book.value!.pages, style: textTheme.button),
                                   const TextSpan(text: "\nPages"),
                                 ],
                               ),
@@ -286,9 +277,7 @@ class _BookInformationContainerState extends State<BookInformationContainer> {
                           bottom: 8.0,
                         ),
                         child: Text(
-                          _controller.book.value!.desc ??
-                              "No "
-                                  "description found",
+                          _controller.book.value!.desc ?? "No description found",
                           style: textTheme.bodyText2,
                         ),
                       ),

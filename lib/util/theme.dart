@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // constructor
   const AppTheme();
 
   // main colors

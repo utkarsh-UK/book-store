@@ -53,6 +53,8 @@ class ApiController extends GetxController implements BaseApiController {
     try {
       final response = await _connect.get(url);
 
+      print('$response');
+
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       } else {
@@ -116,6 +118,7 @@ class ApiController extends GetxController implements BaseApiController {
       final List<dynamic> listOfBooks = response['books'] ?? [];
 
       if (listOfBooks.isNotEmpty) {
+        // shuffles the list to get random books in suggestions.
         recommendedFetchedBooks =
             listOfBooks.map((book) => Book.fromJson(book)).toList()..shuffle();
       }
@@ -131,9 +134,11 @@ class ApiController extends GetxController implements BaseApiController {
   @override
   Future<List<Book>> getSavedBooks() async {
     try {
+      // get saved lists from sharedPref.
       final savedList =
           _preferences.getStringList(Constants.savedBooksKey) ?? [];
 
+      // request books details with isbn no to endpoint "/1.0/books/{isbn}"
       final futures = savedList
           .map((no) =>
               _requestData(Uri.https(Constants.apiBaseUrl, "/1.0/books/$no")))
@@ -164,6 +169,8 @@ class ApiController extends GetxController implements BaseApiController {
       final response = await _requestData(url);
 
       totalRecords = int.tryParse('${response['total']}') ?? 0;
+
+      // check if more results are available to fetch
       if (totalRecords > searchedBooks.length) {
         final List<dynamic> listOfBooks = response['books'] ?? [];
 
@@ -173,6 +180,7 @@ class ApiController extends GetxController implements BaseApiController {
               listOfBooks.map((book) => Book.fromJson(book)).toList();
         }
       } else {
+        // all the search results are finished fetching.
         allDataFetched.update((val) => val = true);
       }
 
@@ -211,6 +219,7 @@ class ApiController extends GetxController implements BaseApiController {
     }
   }
 
+  /// Returns true if book is saved having isbn no as [isbn13]
   bool isBookSaved(String isbn13) {
     try {
       final savedList =
@@ -222,6 +231,7 @@ class ApiController extends GetxController implements BaseApiController {
     }
   }
 
+  /// Resets variables for new search query
   void resetSearchTask() {
     searchedBooks.clear();
     nextPageNumber = 1;

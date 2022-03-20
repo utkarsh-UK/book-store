@@ -10,6 +10,10 @@ class BookTile extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  /// Render single book tile with [image] and [title].
+  ///
+  /// Accepts [onTap] callback for tile's onTap event.
+  /// If [shouldShowBookTitle] is false, book [title] will not be rendered.
   const BookTile({
     required this.height,
     required this.width,

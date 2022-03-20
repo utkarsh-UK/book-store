@@ -13,7 +13,7 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   final double _navIconSize = 30.0;
-  int _currentIndex = 0;
+  int _currentPageIndex = 0;
 
   late List<Widget> _screens;
 
@@ -40,7 +40,7 @@ class _LandingScreenState extends State<LandingScreen> {
       children: [
         //main body
         Positioned.fill(
-          child: _screens[_currentIndex],
+          child: _screens[_currentPageIndex],
         ),
         //bottom navigation
         _buildBottomNavigationBar(navBarHeight, navBarWidth),
@@ -48,6 +48,7 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
+  /// Creates bottom navbar with given [navBarHeight] and [navBarWidth].
   Widget _buildBottomNavigationBar(double navBarHeight, double navBarWidth) {
     return Positioned(
       bottom: 0,
@@ -61,43 +62,38 @@ class _LandingScreenState extends State<LandingScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: () => setState(() => _currentIndex = 0),
-              child: Container(
-                height: navBarHeight * 0.8,
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Icon(
-                  _currentIndex == 0 ? Icons.home_filled : Icons.home_outlined,
-                  color: AppTheme.fontDarkColor,
-                  size: _navIconSize,
-                ),
-              ),
+            _buildNavItem(
+              navBarHeight,
+              _currentPageIndex == 0 ? Icons.home_filled : Icons.home_outlined,
+              0
             ),
-            GestureDetector(
-              onTap: () => setState(() => _currentIndex = 1),
-              child: Container(
-                height: navBarHeight * 0.8,
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Icon(
-                  _currentIndex == 1 ? Icons.saved_search : Icons.search_sharp,
-                  color: AppTheme.fontDarkColor,
-                  size: _navIconSize,
-                ),
-              ),
+            _buildNavItem(
+              navBarHeight,
+              _currentPageIndex == 1 ? Icons.saved_search : Icons.search_sharp,
+              1
             ),
-            GestureDetector(
-              onTap: () => setState(() => _currentIndex = 2),
-              child: Container(
-                height: navBarHeight * 0.8,
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Icon(
-                  _currentIndex == 2 ? Icons.bookmarks : Icons.bookmark_border,
-                  color: AppTheme.fontDarkColor,
-                  size: _navIconSize,
-                ),
-              ),
+            _buildNavItem(
+              navBarHeight,
+              _currentPageIndex == 2 ? Icons.bookmarks : Icons.bookmark_border,
+              2
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Creates individual bottom nav bar item
+  Widget _buildNavItem(double navBarHeight, IconData icon, int pageIndex) {
+    return GestureDetector(
+      onTap: () => setState(() => _currentPageIndex = pageIndex),
+      child: Container(
+        height: navBarHeight * 0.8,
+        padding: const EdgeInsets.symmetric(vertical: 2.0),
+        child: Icon(
+          icon,
+          color: AppTheme.fontDarkColor,
+          size: _navIconSize,
         ),
       ),
     );
